@@ -14,7 +14,12 @@ def row(header, tr):
 
 
 def _email(tr):
-    pass
+    cells = [td.text_content() for td in tr.xpath('td')]
+    for cell in cells:
+        print [cell]
+        m = re.match(r'(?:.* )?([^ ]+)(?:"AT"|\@)([^ ]+).*', cell)
+        if m:
+            return m.group(1) + '@' + m.group(2)
 
 def _openness(tr):
     'Returns True, False or None'
