@@ -12,7 +12,6 @@ def table():
 def row(header, tr):
     data = zip(header, map(unicode, [td.text_content() for td in tr.xpath('td')]))
 
-
 def _email(tr):
     cells = [td.text_content() for td in tr.xpath('td')]
     for cell in cells:
@@ -38,6 +37,10 @@ def _schedule(meeting_location):
     'Returns (day, begin time, end time)'
     pass
 
+import string
 def _telephone(raw):
-    pass
+    for group in re.split(r'(?:[a-zA-Z/]|   )', raw):
+        phone = filter(lambda letter: letter in '1234567890', group)
+        if len(phone) >= 10 and len(phone) <= 13:
+            return phone
 
