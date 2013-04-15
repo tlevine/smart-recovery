@@ -19,7 +19,7 @@ def _openness(tr):
     'Returns True, False or None'
     pass
 
-def _location(meeting_location):
+def _address(meeting_location):
     'Returns an address or None'
     pass
 
