@@ -1,4 +1,5 @@
 #!/usr/bin/env python2
+import re
 from lxml.html import parse
 
 def table():
@@ -17,7 +18,13 @@ def _email(tr):
 
 def _openness(tr):
     'Returns True, False or None'
-    pass
+    lowercased = tr.text_content().lower()
+    if 'closed group' in lowercased or 'closed meeting' in lowercased:
+        return False
+    elif 'open group' in lowercased or 'open meeting' in lowercased:
+        return True
+    else:
+        return None
 
 def _address(meeting_location):
     'Returns an address or None'
