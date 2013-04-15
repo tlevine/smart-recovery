@@ -9,7 +9,7 @@ from dumptruck import DumpTruck
 def table():
     html = parse('showall.php')
     trs = html.xpath('//table/tr')
-    header = unicode(trs.pop(0).xpath('td/descendant::text()'))
+    header = map(unicode, trs.pop(0).xpath('td/descendant::text()'))
     for tr in trs:
         yield row(header, tr)
 
@@ -60,3 +60,6 @@ def _telephone(raw):
         phone = filter(lambda letter: letter in '1234567890', group)
         if len(phone) >= 10 and len(phone) <= 13:
             return phone
+
+if __name__ == '__main__':
+    main()
