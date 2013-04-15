@@ -31,7 +31,7 @@ def test_schedule():
     _compare(parse._schedule, [
         (
             'Wednesday 5:00-6:30 PM     Providence Portland Medical Center    4805 NE Glisan    Enter through main doors on Glisan side.  Room HCC6',
-            ('Wednesday', '5:00', '6:30')
+            ('Wednesday', '17:00', '18:30')
         ),
         (
             'Wednesday 16:30-18:00    Henry Windsor House 13 Pitt Street S70 1AL',

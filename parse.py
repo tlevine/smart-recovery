@@ -51,9 +51,26 @@ def _address(meeting_location):
     'Returns an address or None'
     pass
 
+def _pm(time):
+    hours, minutes = time.split(':')
+    return unicode(int(hours) + 12) + ':' + minutes
+
 def _schedule(meeting_location):
     'Returns (day, begin time, end time)'
-    pass
+    m = re.match(r'(?:.* )?([a-z]+day) ([0-9]{1,2}:[0-9]{2})[ -to]+([0-9]{1,2}:[0-9]{2}) ?([ap]m).*', meeting_location, flags = re.IGNORECASE)
+    if not m:
+        return (None, None, None)
+
+    day = m.group(1)
+    begin = m.group(2)
+    end = m.group(3)
+
+    day_half = m.group(4)
+    if day_half.lower() == 'pm':
+        begin = _pm(begin)
+        end = _pm(end)
+
+    return (day, begin, end)
 
 def _telephone(raw):
     for group in re.split(r'(?:[a-zA-Z/]|   )', raw):
