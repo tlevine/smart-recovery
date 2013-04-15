@@ -15,11 +15,14 @@ def table():
 
 def row(header, tr):
     data = OrderedDict(zip(header, map(unicode, [td.text_content() for td in tr.xpath('td')])))
+    day, begin, end = _schedule(data['Meeting_Location'])
     data.update({
         'Email_Address': _email(tr),
         'Open_Meeting': _openness(tr),
         'Address': None,
-        'Schedule': None,
+        'Day': day,
+        'Begin_Time': begin,
+        'End_Time': end,
         'Telephone': _telephone(tr.xpath('td[position()=4]')[0].text_content()),
     })
     return data
