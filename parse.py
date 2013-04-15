@@ -60,7 +60,7 @@ def _pm(time):
 
 def _schedule(meeting_location):
     'Returns (day, begin time, end time)'
-    m = re.match(r'(?:.* )?([a-z]+day) ([0-9]{1,2}:[0-9]{2})[ -to]+([0-9]{1,2}:[0-9]{2}) ?([ap]m).*', meeting_location, flags = re.IGNORECASE)
+    m = re.match(r'(?:.* )?([a-z]+day) ([0-9]{1,2}:[0-9]{2})[ -to]+([0-9]{1,2}:[0-9]{2}) ?([ap]m)?.*', meeting_location, flags = re.IGNORECASE)
     if not m:
         return (None, None, None)
 
@@ -69,7 +69,7 @@ def _schedule(meeting_location):
     end = m.group(3)
 
     day_half = m.group(4)
-    if day_half.lower() == 'pm':
+    if day_half and day_half.lower() == 'pm':
         begin = _pm(begin)
         end = _pm(end)
 
