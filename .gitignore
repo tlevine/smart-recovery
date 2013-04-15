@@ -1,2 +1,4 @@
-smart.csv
+*.csv
 *.pyc
+*.db
+*.db-journal
