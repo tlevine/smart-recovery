@@ -1,6 +1,10 @@
 #!/usr/bin/env python2
+import string
 import re
+from collections import OrderedDict
+
 from lxml.html import parse
+from dumptruck import DumpTruck
 
 def table():
     html = parse('showall.php')
@@ -10,7 +14,13 @@ def table():
         yield row(header, tr)
 
 def row(header, tr):
-    data = zip(header, map(unicode, [td.text_content() for td in tr.xpath('td')]))
+    data = OrderedDict(zip(header, map(unicode, [td.text_content() for td in tr.xpath('td')])))
+
+def main():
+    dt = DumpTruck(dbname = 'smart.db')
+    for data in table():
+        dt.insert(data, 'smart', commit = False)
+    dt.commit()
 
 def _email(tr):
     cells = [td.text_content() for td in tr.xpath('td')]
@@ -37,7 +47,6 @@ def _schedule(meeting_location):
     'Returns (day, begin time, end time)'
     pass
 
-import string
 def _telephone(raw):
     for group in re.split(r'(?:[a-zA-Z/]|   )', raw):
         phone = filter(lambda letter: letter in '1234567890', group)
