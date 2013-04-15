@@ -25,7 +25,7 @@ def row(header, tr):
     return data
 
 def main():
-    dt = DumpTruck(dbname = 'smart.db')
+    dt = DumpTruck(dbname = '/tmp/smart.db')
     for data in table():
         dt.insert(data, 'smart', commit = False)
     dt.commit()
