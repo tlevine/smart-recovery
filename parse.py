@@ -15,6 +15,14 @@ def table():
 
 def row(header, tr):
     data = OrderedDict(zip(header, map(unicode, [td.text_content() for td in tr.xpath('td')])))
+    data.update({
+        'Email_Address': _email(tr),
+        'Open_Meeting': _openness(tr),
+        'Address': None,
+        'Schedule': None,
+        'Telephone': _telephone(tr.xpath('td[position()=4]')[0].text_content()),
+    })
+    return data
 
 def main():
     dt = DumpTruck(dbname = 'smart.db')
@@ -52,4 +60,3 @@ def _telephone(raw):
         phone = filter(lambda letter: letter in '1234567890', group)
         if len(phone) >= 10 and len(phone) <= 13:
             return phone
-
