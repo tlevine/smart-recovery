@@ -57,6 +57,18 @@ def test_telephone():
         ('920-495-0062           920-818-0062', '9204950062')
     ]
 
+def test_openness():
+    _compare(parse._openness, [
+        (
+            fromstring('<tr><td bgcolor="#FFFFFF" width="10%"><font size="2">Australia</font></td>\n <td bgcolor="#FFFFFF" width="10%"><font size="2">QLD</font></td>\n <td bgcolor="#FFFFFF" width="15%"><font size="2">Kirra</font></td>\n <td bgcolor="#FFFFFF" width="20%"><font size="2">ON HOLD ,Kirra Hill Community Centre, Powell/Garrick St</font></td>\n <td bgcolor="#FFFFFF" width="15%"><font size="2"></font></td>\n <td bgcolor="#FFFFFF" width="15%"><font size="2">Jane Su-Ming Lai</font></td>\n <td bgcolor="#FFFFFF" width="15%"><font size="2"></font></td>\n</tr>'),
+            None
+        ),
+        (
+            fromstring('<tr><td bgcolor="#F0F0F0" width="10%"><font size="2">USA</font></td>\n <td bgcolor="#F0F0F0" width="10%"><font size="2">Wisconsin</font></td>\n <td bgcolor="#F0F0F0" width="15%"><font size="2">Madison (CLOSED MEETING, FOR PATIENTS ONLY)</font></td>\n <td bgcolor="#F0F0F0" width="20%"><font size="2">Thursday    2:30-3:15  Mendota Mental Health Institution (MMHI)</font></td>\n <td bgcolor="#F0F0F0" width="15%"><font size="2">608-301-1487</font></td>\n <td bgcolor="#F0F0F0" width="15%"><font size="2">Bruce Christianson (F)</font></td>\n <td bgcolor="#F0F0F0" width="15%"><font size="2">Bruce.Christianson"AT"dhs.wisconsin.gov</font></td>\n</tr>'),
+            False
+        )
+    ]
+
 def test_email():
     _compare(parse._email, [
         (
