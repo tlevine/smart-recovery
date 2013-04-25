@@ -2,7 +2,9 @@
 import string
 import re
 from collections import OrderedDict
+from math import floor
 
+import chomsky as c
 from lxml.html import parse
 from dumptruck import DumpTruck
 
@@ -54,26 +56,58 @@ def _address(meeting_location):
     'Returns an address or None'
     pass
 
-def _pm(time):
-    hours, minutes = time.split(':')
-    return unicode(int(hours) + 12) + ':' + minutes
+def _totime(rawtime):
+    'Convert a raw time to a float'
+    hours, minutes = map(float, rawtime.split(':'))
+    return hours + (minutes / 60)
 
+def _fromtime(time):
+    'Convert a float time to unicode.'
+    hours = floor(time)
+    minutes = 60 * (time - hours)
+    return '%02d:%02d' % (hours, minutes)
+
+def _apply_noonness(begin, end = None, noonness = None):
+    'Given float times, apply noonness.'
+    b = e = None
+    if end == None:
+        # If end is not specified
+        if noonness == 'pm' and begin < 12:
+            b = begin + 12
+        elif begin < 7:
+            # Early morning or afternoon?
+            b = begin + 12
+        else:
+            # Otherwise
+            b = begin
+    else:
+        # If end is specified
+        if begin > end:
+            b = begin
+            end = end + 12
+        elif noonness == 'pm' and begin < 12 and end < 12:
+            b = begin + 12
+            e = end + 12
+        else:
+            b = begin
+            e = end
+    return b, e
+
+# https://pypi.python.org/pypi/chomsky/v0.0.8
 def _schedule(meeting_location):
     'Returns (day, begin time, end time)'
-    m = re.match(r'(?:.* )?([a-z]+day) ([0-9]{1,2}:[0-9]{2})[ -to]+([0-9]{1,2}:[0-9]{2}) ?([ap]m)?.*', meeting_location, flags = re.IGNORECASE)
-    if not m:
-        return (None, None, None)
+    matcher = c.Regex('([A-Za-z]+day) ', group = 1) + \
+        c.Regex('[0-9]{1,2}:[0-9]{2}') + \
+        c.Regex('[ -]([0-9]{1,2}:[0-9]{2}) ', group = 1) + \
+        c.Optional(c.Regex('([APap][Mm])')) + \
+        c.Chars()
 
-    day = m.group(1)
-    begin = m.group(2)
-    end = m.group(3)
+    day,begin_raw,end_raw,noon_raw,_ = matcher(meeting_location)
+    noon = noon_raw[0] if len(noon_raw) == 1 else None
+    print [noon]
 
-    day_half = m.group(4)
-    if day_half and day_half.lower() == 'pm':
-        begin = _pm(begin)
-        end = _pm(end)
-
-    return (day, begin, end)
+    begin, end = map(_fromtime, _apply_noonness(_totime(begin_raw), _totime(end_raw), noon))
+    return (unicode(day), begin, end)
 
 def _telephone(raw):
     for group in re.split(r'(?:[a-zA-Z/]|   )', raw):
