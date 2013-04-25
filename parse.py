@@ -58,18 +58,23 @@ def _address(meeting_location):
 
 def _totime(rawtime):
     'Convert a raw time to a float'
-    hours, minutes = map(float, rawtime.split(':'))
-    return hours + (minutes / 60)
+    if rawtime != None:
+        hours, minutes = map(float, rawtime.split(':'))
+        return hours + (minutes / 60)
 
 def _fromtime(time):
     'Convert a float time to unicode.'
-    hours = floor(time)
-    minutes = 60 * (time - hours)
-    return '%02d:%02d' % (hours, minutes)
+    if time != None:
+        hours = floor(time)
+        minutes = 60 * (time - hours)
+        return '%02d:%02d' % (hours, minutes)
 
 def _apply_noonness(begin, end = None, noonness = None):
     'Given float times, apply noonness.'
     b = e = None
+    if noonness != None:
+        noonness = noonness.lower()
+
     if end == None:
         # If end is not specified
         if noonness == 'pm' and begin < 12:
@@ -98,16 +103,19 @@ def _schedule(meeting_location):
     'Returns (day, begin time, end time)'
     matcher = c.Regex('([A-Za-z]+day) ', group = 1) + \
         c.Regex('[0-9]{1,2}:[0-9]{2}') + \
-        c.Regex('[ -]([0-9]{1,2}:[0-9]{2}) ', group = 1) + \
+        c.Optional(c.Regex('[ -]([0-9]{1,2}:[0-9]{2}) ', group = 1)) + \
         c.Optional(c.Regex('([APap][Mm])')) + \
         c.Chars()
 
-    day,begin_raw,end_raw,noon_raw,_ = matcher(meeting_location)
-    noon = noon_raw[0] if len(noon_raw) == 1 else None
-    print [noon]
+    day,begin_raw,maybe_end_raw,maybe_noon,_ = matcher(meeting_location)
 
-    begin, end = map(_fromtime, _apply_noonness(_totime(begin_raw), _totime(end_raw), noon))
-    return (unicode(day), begin, end)
+    begin = _totime(begin_raw)
+    end = _totime(unicode(maybe_end_raw[0])) if len(maybe_end_raw) == 1 else None
+    noon = unicode(maybe_noon[0]) if len(maybe_noon) == 1 else None
+    print begin, end, noon
+
+    # Clean up day, begin, end
+    return tuple([unicode(day)] + map(_fromtime, _apply_noonness(begin, end, noon)))
 
 def _telephone(raw):
     for group in re.split(r'(?:[a-zA-Z/]|   )', raw):
