@@ -165,14 +165,19 @@ def _schedule(meeting_location):
         c.Optional(c.Regex('([APap][Mm])')) + \
         c.Chars()
 
-    day_raw,begin_raw,maybe_end_raw,maybe_noon,_ = matcher(meeting_location)
-    day = DAYS_OF_WEEK[day_raw]
-    begin = _totime(begin_raw)
-    end = _totime(unicode(maybe_end_raw[0])) if len(maybe_end_raw) == 1 else None
-    noon = unicode(maybe_noon[0]) if len(maybe_noon) == 1 else None
+    try:
+        m = matcher(meeting_location)
+    except c.exceptions.ParseException:
+        return (None, None, None)
+    else:
+        day_raw,begin_raw,maybe_end_raw,maybe_noon,_ = m
+        day = DAYS_OF_WEEK[day_raw]
+        begin = _totime(begin_raw)
+        end = _totime(unicode(maybe_end_raw[0])) if len(maybe_end_raw) == 1 else None
+        noon = unicode(maybe_noon[0]) if len(maybe_noon) == 1 else None
 
-    # Clean up day, begin, end
-    return tuple([unicode(day)] + map(_fromtime, _apply_noonness(begin, end, noon)))
+        # Clean up day, begin, end
+        return tuple([unicode(day)] + map(_fromtime, _apply_noonness(begin, end, noon)))
 
 def _telephone(raw):
     for group in re.split(r'(?:[a-zA-Z/]|   )', raw):
