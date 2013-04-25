@@ -66,7 +66,7 @@ def _address(meeting_location):
 def _totime(rawtime):
     'Convert a raw time to a float'
     if rawtime != None:
-        hours, minutes = map(float, rawtime.split(':'))
+        hours, minutes = map(float, re.split(r'[:.]', rawtime))
         return hours + (minutes / 60)
 
 def _fromtime(time):
@@ -105,21 +105,37 @@ def _apply_noonness(begin, end = None, noonness = None):
             e = end
     return b, e
 
+DAYS_OF_WEEK = {
+    'Sunday ': 'Sunday',
+    'Monday ': 'Monday',
+    'Tuesday ': 'Tuesday',
+    'Wednesday ': 'Wednesday',
+    'Thursday ': 'Thursday',
+    'Friday ': 'Friday',
+    'Saturday ': 'Saturday',
+    'Sun ': 'Sunday',
+    'Mon ': 'Monday',
+    'Tue ': 'Tuesday',
+    'Wed ': 'Wednesday',
+    'Thu ': 'Thursday',
+    'Fri ': 'Friday',
+    'Sat ': 'Saturday',
+}
 # https://pypi.python.org/pypi/chomsky/v0.0.8
 def _schedule(meeting_location):
     'Returns (day, begin time, end time)'
-    matcher = c.Regex('([A-Za-z]+day) ', group = 1) + \
-        c.Regex('[0-9]{1,2}:[0-9]{2}') + \
-        c.Optional(c.Regex('[ -]([0-9]{1,2}:[0-9]{2}) ', group = 1)) + \
+    day_matcher = c.Any(*map(c.Literal, DAYS_OF_WEEK.keys()))
+    matcher = day_matcher + \
+        c.Regex('([0-9]{1,2}[.:][0-9]{2})', group = 1) + \
+        c.Optional(c.Regex('[ -]+([0-9]{1,2}[.:][0-9]{2}) ?', group = 1)) + \
         c.Optional(c.Regex('([APap][Mm])')) + \
         c.Chars()
 
-    day,begin_raw,maybe_end_raw,maybe_noon,_ = matcher(meeting_location)
-
+    day_raw,begin_raw,maybe_end_raw,maybe_noon,_ = matcher(meeting_location)
+    day = DAYS_OF_WEEK[day_raw]
     begin = _totime(begin_raw)
     end = _totime(unicode(maybe_end_raw[0])) if len(maybe_end_raw) == 1 else None
     noon = unicode(maybe_noon[0]) if len(maybe_noon) == 1 else None
-    print begin, end, noon
 
     # Clean up day, begin, end
     return tuple([unicode(day)] + map(_fromtime, _apply_noonness(begin, end, noon)))
