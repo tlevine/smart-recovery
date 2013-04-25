@@ -10,6 +10,10 @@ def _compare(function, raw_expected):
 def test_address():
     _compare(parse._address, [
         (
+            'Wed 10.30 - 12.00pm Access Community Group, Warilla Scout Hall Lowe Park George Street',
+            'Warilla Scout Hall\nLowe Park\nGeorge Street'
+        ),
+        (
             'Wednesday 5:00-6:30 PM     Providence Portland Medical Center    4805 NE Glisan    Enter through main doors on Glisan side.  Room HCC6',
             'Providence Portland Medical Center\n4805 NE Glisan'
         ),
@@ -29,6 +33,10 @@ def test_address():
 
 def test_schedule():
     _compare(parse._schedule, [
+        (
+            'Wed 10.30 - 12.00pm Access Community Group, Warilla Scout Hall Lowe Park George Street',
+            'Wednesday', '10:30', '12:00'
+        ),
         (
             'Wednesday 5:00-6:30 PM     Providence Portland Medical Center    4805 NE Glisan    Enter through main doors on Glisan side.  Room HCC6',
             ('Wednesday', '17:00', '18:30')
