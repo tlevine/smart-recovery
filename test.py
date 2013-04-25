@@ -35,7 +35,7 @@ def test_schedule():
     _compare(parse._schedule, [
         (
             'Wed 10.30 - 12.00pm Access Community Group, Warilla Scout Hall Lowe Park George Street',
-            'Wednesday', '10:30', '12:00'
+            ('Wednesday', '10:30', '12:00')
         ),
         (
             'Wednesday 5:00-6:30 PM     Providence Portland Medical Center    4805 NE Glisan    Enter through main doors on Glisan side.  Room HCC6',
