@@ -60,8 +60,42 @@ def _take_while(f, l):
             break
 
 def _address(meeting_location):
+    return '\n'.join([' '.join(line) for line in _iteraddress(meeting_location)][1:])
+
+def _iteraddress(meeting_location):
     'Returns an address or None'
-    return '\n'.join(re.split(r'  +', meeting_location)[1:])
+    words = meeting_location.split(' ') # skip schedule
+
+    prev_digit = False
+    prev_empty = False
+    line = []
+    for word in words:
+        if set('1234567890').issubset(word) and not prev_digit:
+            yield line
+            line = []
+            prev_empty = False
+            prev_digit = False
+            continue
+        else:
+            prev_digit = True
+
+        if word == '' and prev_empty:
+            yield line
+            line = []
+            prev_empty = False
+            prev_digit = False
+            continue
+        else:
+            prev_empty = True
+
+        if word and word[0] in {'\n', ','}:
+            yield line
+            prev_empty = False
+            prev_digit = False
+            line = []
+
+        # If we haven't ended the line, add to the line
+        line.append(word)
 
 def _totime(rawtime):
     'Convert a raw time to a float'

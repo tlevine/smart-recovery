@@ -10,12 +10,8 @@ def _compare(function, raw_expected):
 def test_address():
     _compare(parse._address, [
         (
-            'Wed 10.30 - 12.00pm Access Community Group, Warilla Scout Hall Lowe Park George Street',
-            'Warilla Scout Hall\nLowe Park\nGeorge Street'
-        ),
-        (
-            'Wednesday 5:00-6:30 PM     Providence Portland Medical Center    4805 NE Glisan    Enter through main doors on Glisan side.  Room HCC6',
-            'Providence Portland Medical Center\n4805 NE Glisan'
+            'Tuesday 11:30-13:00    Turning Point 44 Sidney Street S1 4RH',
+            'Turning Point\n44 Sidney Street S1 4RH',
         ),
         (
             'Wednesday 16:30-18:00    Henry Windsor House 13 Pitt Street S70 1AL',
@@ -26,8 +22,12 @@ def test_address():
             '1700 S. 24th St.',
         ),
         (
-            'Tuesday 11:30-13:00    Turning Point 44 Sidney Street S1 4RH',
-            'Turning Point\n44 Sidney Street S1 4RH',
+            'Wed 10.30 - 12.00pm Access Community Group, Warilla Scout Hall Lowe Park George Street',
+            'Warilla Scout Hall\nLowe Park\nGeorge Street'
+        ),
+        (
+            'Wednesday 5:00-6:30 PM     Providence Portland Medical Center    4805 NE Glisan    Enter through main doors on Glisan side.  Room HCC6',
+            'Providence Portland Medical Center\n4805 NE Glisan'
         ),
     ])
 
