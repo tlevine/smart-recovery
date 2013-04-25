@@ -52,9 +52,16 @@ def _openness(tr):
     else:
         return None
 
+def _take_while(f, l):
+    for i in l:
+        if f(i):
+            yield i
+        else:
+            break
+
 def _address(meeting_location):
     'Returns an address or None'
-    pass
+    return '\n'.join(re.split(r'  +', meeting_location)[1:])
 
 def _totime(rawtime):
     'Convert a raw time to a float'
